@@ -1,5 +1,4 @@
 WELCOME TO M ROHIT's 3D Personal Portfolio Website
-<<<<<<< HEAD
 
 This project is built with:
 
