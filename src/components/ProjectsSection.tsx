@@ -19,7 +19,7 @@ const ProjectsSection = () => {
   const projects = [
     {
       id: 1,
-      title: "Knowtify - Internal Docs QA Agent",
+      title: "Knowtify",
       description: "Internal documentation QA agent that helps developers find answers to their questions.",
       image: knowtify,
       tech: ["TypeScript", "Python", "CSS", "Javascript"],
