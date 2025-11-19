@@ -167,6 +167,7 @@ const ProjectsSection = () => {
               <div className="flex space-x-4 pt-4">
                 <a
                   href={project.live}
+                  target="_blank"
                   className="flex items-center space-x-2 btn-ghost flex-1 justify-center"
                 >
                   <ArrowUpRight size={16} weight="bold" />
@@ -174,6 +175,7 @@ const ProjectsSection = () => {
                 </a>
                 <a
                   href={project.github}
+                  target="_blank"
                   className="flex items-center space-x-2 btn-ghost flex-1 justify-center"
                 >
                   <GithubLogo size={16} weight="bold" />
