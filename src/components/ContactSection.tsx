@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useForm } from "react-hook-form";
+import emailjs from '@emailjs/browser';
+import { toast } from "@/components/ui/use-toast";
 import { PaperPlaneTilt, GithubLogo, LinkedinLogo, TwitterLogo } from "phosphor-react";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -16,9 +18,7 @@ const ContactSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
   const socialRef = useRef<HTMLDivElement>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>();
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<FormData>();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -81,23 +81,45 @@ const ContactSection = () => {
   }, []);
 
   const onSubmit = async (data: FormData) => {
-    setIsSubmitting(true);
-    
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    console.log("Form submitted:", data);
-    reset();
-    setIsSubmitting(false);
-    
-    // Success animation
-    gsap.to(".submit-btn", {
-      scale: 1.1,
-      duration: 0.2,
-      yoyo: true,
-      repeat: 1,
-      ease: "power2.out",
-    });
+    try {
+      // Map form data to EmailJS template params
+      const templateParams = {
+        from_name: data.name,
+        from_email: data.email,
+        message: data.message,
+      };
+
+      // Read EmailJS keys from Vite env vars (VITE_ prefix). Provide
+      // a fallback to the placeholder strings so the component still
+      // builds if env vars are not provided.
+      const serviceId = (import.meta.env as any).VITE_EMAILJS_SERVICE_ID || 'YOUR_SERVICE_ID';
+      const templateId = (import.meta.env as any).VITE_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_ID';
+      const publicKey = (import.meta.env as any).VITE_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY';
+
+      await emailjs.send(serviceId, templateId, templateParams, publicKey);
+
+      reset();
+      toast({
+        title: 'Message sent',
+        description: 'Message sent successfully!',
+      });
+
+      // Success animation
+      gsap.to('.submit-btn', {
+        scale: 1.1,
+        duration: 0.2,
+        yoyo: true,
+        repeat: 1,
+        ease: 'power2.out',
+      });
+    } catch (error) {
+      console.error('EmailJS error:', error);
+      toast({
+        title: 'Failed to send',
+        description: 'Failed to send message. Please try again later.',
+        variant: 'destructive',
+      });
+    }
   };
 
   const socialLinks = [
